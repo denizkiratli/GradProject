@@ -23,7 +23,11 @@
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("New Upload", "Upload", "Home")</li>
                     <li>@Html.ActionLink("Results", "Results", "Home")</li>
-                    <li>@Html.ActionLink("View Users", "ViewUsers", "Home")</li>
+                    @if (Roles.IsUserInRole("Admin"))
+                    {
+                        <li>@Html.ActionLink("View Users", "ViewUsers", "Home")</li>
+                    }
+
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
