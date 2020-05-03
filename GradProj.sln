@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GradProj", "GradProj\GradProj.csproj", "{77119C0B-3E8F-4C8C-877F-478697630387}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataLibrary", "DataLibrary\DataLibrary.csproj", "{4F8C7CBB-6F13-4F5C-94BA-4F541D11B00B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{77119C0B-3E8F-4C8C-877F-478697630387}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77119C0B-3E8F-4C8C-877F-478697630387}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77119C0B-3E8F-4C8C-877F-478697630387}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77119C0B-3E8F-4C8C-877F-478697630387}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F8C7CBB-6F13-4F5C-94BA-4F541D11B00B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F8C7CBB-6F13-4F5C-94BA-4F541D11B00B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F8C7CBB-6F13-4F5C-94BA-4F541D11B00B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F8C7CBB-6F13-4F5C-94BA-4F541D11B00B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77BC340B-75EA-4517-B942-DC8810E49497}
+	EndGlobalSection
+EndGlobal
