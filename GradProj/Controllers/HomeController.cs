@@ -16,7 +16,6 @@ namespace GradProj.Controllers
             return View();
         }
 
-        [Authorize(Roles ="Student")]
         public ActionResult Upload()
         {
             ViewBag.Message = "Upload your files.";
@@ -45,7 +44,6 @@ namespace GradProj.Controllers
             return View(Results);
         }
 
-        [Authorize(Roles ="Admin")]
         public ActionResult ViewUsers()
         {
             ViewBag.Message = "View the registered users.";
