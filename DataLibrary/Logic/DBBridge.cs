@@ -16,7 +16,7 @@ namespace DataLibrary.Logic
     {
         public static List<UserModel> LoadUsers()
         {
-            string sql = @"SELECT InstitutionId, UserName, Email FROM dbo.Users;";
+            string sql = @"SELECT InstitutionId, UserFullName, Email FROM dbo.Users;";
 
             return SqlAccess.LoadData<UserModel>(sql);
         }

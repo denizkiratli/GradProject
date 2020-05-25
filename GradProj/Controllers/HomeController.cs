@@ -2,6 +2,7 @@
 using GradProj.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -21,6 +22,34 @@ namespace GradProj.Controllers
             ViewBag.Message = "Upload your files.";
 
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult Upload(HttpPostedFileBase file)
+        {
+            if (file != null && file.ContentLength > 0)
+            {
+                var path = Path.Combine("C:\\Users\\deniz\\source\\repos\\GradProj\\Metrics\\", "Assignment.txt");
+                file.SaveAs(path);
+            }
+
+            return RedirectToAction("UploadResult");
+        }
+
+        public ActionResult UploadResult()
+        {
+            Metrics.Program.Main();
+
+            List<UploadResultModel> UploadResult = new List<UploadResultModel>();
+
+            UploadResult.Add(new UploadResultModel
+            {
+                NumofClassData = DataLibrary.Models.UploadResultModel.NumofClassData,
+                NumofClassMethod = DataLibrary.Models.UploadResultModel.NumofClassMethod,
+                NumofCritClass = DataLibrary.Models.UploadResultModel.NumofCritClass
+            });
+
+            return View(UploadResult);
         }
 
         public ActionResult Results()
@@ -56,12 +85,29 @@ namespace GradProj.Controllers
                 Users.Add(new UserModel
                 {
                     UserId = row.InstitutionId,
-                    UserName = row.UserName,
-                    MailAddress = row.UserMail
+                    UserName = row.UserFullName,
+                    MailAddress = row.EMail
                 });
             }
 
             return View(Users);
+        }
+
+        public ActionResult EditUserInfo()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditUserInfo(UserModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View();
         }
     }
 }

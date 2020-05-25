@@ -1,0 +1,38 @@
+﻿@model IEnumerable<GradProj.Models.UploadResultModel>
+
+@{
+    ViewBag.Title = "UploadResult";
+}
+
+<h2>UploadResult</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.NumofClassData)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NumofClassMethod)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NumofCritClass)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumofClassData)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumofClassMethod)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumofCritClass)
+            </td>
+        </tr>
+    }
+
+
+</table>

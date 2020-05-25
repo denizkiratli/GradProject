@@ -110,11 +110,13 @@
     <Compile Include="Logic\DBBridge.cs" />
     <Compile Include="Models\AssignmentModel.cs" />
     <Compile Include="Models\ResultModel.cs" />
+    <Compile Include="Models\UploadResultModel.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ClassDiagram2.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

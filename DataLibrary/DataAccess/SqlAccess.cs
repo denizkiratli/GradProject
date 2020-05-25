@@ -29,7 +29,7 @@ namespace DataLibrary.DataAccess
         {
             using (IDbConnection connection = new SqlConnection(GetConnecitonString()))
             {
-                    return connection.Execute(sql, data);
+                return connection.Execute(sql, data);
             }
         }
 

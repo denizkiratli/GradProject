@@ -9,8 +9,8 @@ namespace DataLibrary.Models
     public class UserModel
     {
         public int InstitutionId { get; set; }
-        public string UserName { get; set; }
-        public string UserMail { get; set; }
+        public string UserFullName { get; set; }
+        public string EMail { get; set; }
     }
 
 }

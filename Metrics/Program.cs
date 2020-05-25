@@ -2,58 +2,101 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Text.RegularExpressions;
 using System.IO;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis;
 using System.Collections;
+using DataLibrary;
 
 namespace Metrics
 {
-    public static class Security
+    public class Security
     {
         public class CAT
         {
             public static List<string> Calculate(Microsoft.CodeAnalysis.SyntaxNode root)
             {
+                string main_list = "";
                 List<string> all_classified_variables = new List<string>();
                 var random = root.DescendantNodes().OfType<ClassDeclarationSyntax>().ToList();
-                int ct_classified = 0;
+
                 foreach (var value in random)
                 {
                     var temp = value.ToFullString();
-                    if (temp.Contains("class Program")) { continue; }
+                    if (temp.Contains("static void Main"))
+                    {
+                        main_list = value.ToFullString(); // main içeren classı stringe çevirim main_liste verdik.
+                        var tetree = CSharpSyntaxTree.ParseText(main_list); //bir daha parse
+                        var teroot = tetree.GetRoot();
+                        var random_2 = teroot.DescendantNodes().OfType<MethodDeclarationSyntax>().ToList(); // şimdi methdodları ayırt ettik burada.
+                        foreach (var item2 in random_2)
+                        {
+                            if (item2.ToFullString().Contains("static void Main"))
+                            {
+                                main_list = item2.ToFullString();
+                                var result = Regex.Split(main_list, "\r\n|\r|\n"); // main methodunu satırlara ayırıyoruz ve result arrayine hücre hücre atama yapıyoruz.
+                                foreach (var item in result)
+                                {
+                                    if (item.Contains("classified") || item.Contains("Classified")) // satırlardan //classified var mı diye check ediliyor
+                                    {
+                                        string[] words = item.Trim().Split(' '); //kondisyonu sağlayan satırları ' ' boşluklarına göre split ediyoruz
+
+                                        foreach (var değer in words)
+                                        {
+                                            //Console.WriteLine(değer);
+                                            if (!değer.Contains("var") && !değer.Contains("=") && !değer.Contains("bool") && !değer.Contains("lassified") && !değer.Contains("byte") && !değer.Contains("sbyte") && !değer.Contains("char") && !değer.Contains("decimal") && !değer.Contains("double") && !değer.Contains("float") && !değer.Contains("int") && !değer.Contains("uint") && !değer.Contains("long") && !değer.Contains("ulong") && !değer.Contains("short") && !değer.Contains("ushort") && !değer.Contains("string"))
+                                            {// <= şu tarz operatorlere bakmıyoruz çünkü bizim derdimiz sadece assignmentlar ('=').
+                                                if (words[Array.IndexOf(words, değer) - 1] != "=")
+                                                {
+                                                    var hazır = değer.Trim(',', ';');
+                                                    all_classified_variables.Add(hazır);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     else
                     {
                         var temp_tree = CSharpSyntaxTree.ParseText(temp);
                         var temp_root = temp_tree.GetRoot();
                         var random_2 = temp_root.DescendantNodes().OfType<BaseFieldDeclarationSyntax>().ToList();
+
                         foreach (var tmp in random_2)
                         {
-                            SyntaxFactory.Comment(tmp.ToFullString());
                             var tmp_2 = tmp.ToFullString();
                             if (tmp_2.Contains("Classified") || tmp_2.Contains("classified"))
                             {
-                                ct_classified++;
                                 tmp_2 = tmp_2.Trim();
                                 string[] words = tmp_2.Split(' ');
-                                if (words[0] == "public" || words[0] == "private" || words[0] == "protected")
+                                foreach (var değer in words)
                                 {
-                                    all_classified_variables.Add(words[2].TrimEnd(';'));
-                                }
-                                else
-                                {
-                                    all_classified_variables.Add(words[1].TrimEnd(';'));
+                                    if (!değer.Contains("public") && !değer.Contains("lassified") && !değer.Contains("var") && !değer.Contains("=") && !değer.Contains("private") && !değer.Contains("protected") && !değer.Contains("bool") && !değer.Contains("byte") && !değer.Contains("sbyte") && !değer.Contains("char") && !değer.Contains("decimal") && !değer.Contains("double") && !değer.Contains("float") && !değer.Contains("int") && !değer.Contains("uint") && !değer.Contains("long") && !değer.Contains("ulong") && !değer.Contains("short") && !değer.Contains("ushort") && !değer.Contains("string"))
+                                    {// <= şu tarz operatorlere bakmıyoruz çünkü bizim derdimiz sadece assignmentlar ('=').
+                                        if (words[Array.IndexOf(words, değer) - 1] != "=")
+                                        {
+                                            var hazır = değer.Trim(',', ';');
+                                            all_classified_variables.Add(hazır);
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
+                foreach (var itemu in all_classified_variables)
+                {
+                    Console.WriteLine("Classified attribute:" + itemu);
+                }
                 return all_classified_variables.Distinct().ToList();
             }
         }
+
         public class CMT
         {
             public static List<string> Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> classified_values)
@@ -63,7 +106,7 @@ namespace Metrics
                 foreach (var value in random)
                 {
                     var temp = value.ToFullString();
-                    if (temp.Contains("class Program")) { continue; }
+                    if (temp.Contains("static void Main")) { continue; }
                     else
                     {
                         var temp_tree = CSharpSyntaxTree.ParseText(temp);
@@ -71,29 +114,67 @@ namespace Metrics
                         var random_2 = temp_root.DescendantNodes().OfType<MethodDeclarationSyntax>().ToList();
                         foreach (var item in random_2)
                         {
-                            var temp_2 = item.ToFullString();
+                            var temp_2 = item.ToFullString().Trim();
+                            string[] words = temp_2.Split(' ');
+
                             foreach (var x in classified_values)
                             {
+                                foreach (var y in words)
+                                {
+                                    if (y == x)
+                                    {
+                                        temp_2 = temp_2.Trim();
+                                        string[] split = temp_2.Split(' ', '(');
+                                        if (split[0] == "abstract" && (split[1] == "public" || split[1] == "private" || split[0] == "protected"))
+                                        {
+                                            all_classified_methods.Add(split[3]);
+                                            break;
+                                        }
+                                        else if ((split[0] == "public" || split[0] == "private" || split[0] == "protected") && split[1] == "override" || split[1] == "virtual" || split[1] == "abstract" || split[1] == "static")
+                                        {
+                                            all_classified_methods.Add(split[3]);
+                                        }
+                                        else if (split[0] == "bool" || split[0] == "float" || split[0] == "short" || split[0] == "int" || split[0] == "double" || split[0] == "byte" || split[0] == "string")
+                                        {
+                                            all_classified_methods.Add(split[1]);
+                                        }
+                                        else
+                                        {
+                                            all_classified_methods.Add(split[2]);
+                                            break;
+                                        }
+                                    }
+                                }
                                 if (temp_2.Contains(x) && temp_2.Contains("Main") == false)
                                 {
-                                    temp_2 = temp_2.Trim();
+                                    /*temp_2 = temp_2.Trim();
                                     string[] split = temp_2.Split(' ', '(');
-                                    if (split[0] == "abstract" && (split[1] == "public" || split[1] == "private"))
+                                    if (split[0] == "abstract" && (split[1] == "public" || split[1] == "private" || split[0] == "protected"))
                                     {
                                         all_classified_methods.Add(split[3]);
                                         break;
+                                    }
+                                    else if ((split[0] == "public" || split[0] == "private" || split[0] == "protected") && split[1] == "override" || split[1] == "virtual" || split[1] == "abstract" || split[1] == "static")
+                                    {
+                                        all_classified_methods.Add(split[3]);
+                                    }
+                                    else if (split[0] == "bool" || split[0] == "float" || split[0] == "short" || split[0] == "int" || split[0] == "double" || split[0] == "byte" || split[0] == "string")
+                                    {
+                                        all_classified_methods.Add(split[1]);
                                     }
                                     else
                                     {
                                         all_classified_methods.Add(split[2]);
                                         break;
-                                    }
+                                    }*/
                                 }
                             }
-                            //buraya ikinci olarak bide constructorlar yada getter setterlar için bir case eklenebilir. Sonuçta onlarda değerleri
-                            //manipule edebiliyor.
                         }
                     }
+                }
+                foreach (var x in all_classified_methods)
+                {
+                    Console.WriteLine(x);
                 }
                 return all_classified_methods.Distinct().ToList();
             }
@@ -109,17 +190,26 @@ namespace Metrics
                 temp_2.AddRange(classified_methods);
                 string[] words;
                 List<string> all_critical_classes = new List<string>();
+
+
                 foreach (var value in random)
                 {
                     //Console.WriteLine(value);
                     var temp = value.ToFullString();
-                    if (temp.Contains("class Program")) { continue; }
+
+                    if (temp.Contains("static void Main")) { continue; }
                     else
                     {
+                        //Console.WriteLine(temp);
+
+
                         foreach (var item in temp_2)
                         {
+                            //Console.WriteLine(item);
+
                             if (temp.Contains(item))
                             {
+
                                 number_of_critical_classes++;
                                 words = temp.Trim().Split(' ', '{');
                                 if ((words[0] == "public" || words[0] == "private" || words[0] == "abstract") && (words[1] == "class"))
@@ -129,6 +219,10 @@ namespace Metrics
                                 else if ((words[0] == "public" || words[0] == "private") && (words[1] == "abstract"))
                                 {
                                     all_critical_classes.Add(words[3].TrimEnd());
+                                }
+                                else if (words[0] == "class" && !words[1].Contains(":"))
+                                {
+                                    all_critical_classes.Add(words[1].TrimEnd());
                                 }
                                 else if (words[0].Trim() == "[Serializable]")
                                 {
@@ -150,12 +244,22 @@ namespace Metrics
                         }
                     }
                 }
-                foreach (var x in random)
+
+                foreach (var x in random) // Inheritence bakılan yer
                 {
-                    words = x.ToFullString().Trim().Split(' ', '{');
+                    words = x.ToFullString().Trim().Split(' ', '{', '\n', '\r');
                     if (words[3] == ":" && all_critical_classes.Contains(words[4]))
                     {
-                        all_critical_classes.Add(words[2]);
+                        all_critical_classes.Add(words[2].Trim(':'));
+                    }
+                    else if (words[2] == ":" && all_critical_classes.Contains(words[3]))
+                    {
+                        all_critical_classes.Add(words[1]);
+                    }
+                    else if (words[1].Contains(":") && all_critical_classes.Contains(words[2]))
+                    {
+                        var edited = words[1].Remove(words[1].Length - 1);
+                        all_critical_classes.Add(edited);
                     }
                 }
                 return all_critical_classes.Distinct().ToList();
@@ -213,7 +317,7 @@ namespace Metrics
                 return System.Math.Round(result, 1);
             }
         }
-        public class CCDA
+        public class CCDA ///NAN DÜZELDİ
         {
             public static List<string> Calculate(Microsoft.CodeAnalysis.SyntaxNode root)
             {
@@ -241,26 +345,27 @@ namespace Metrics
                                     ct_nonPrivateClassified++;
                                     tmp_2 = tmp_2.Trim();
                                     string[] words = tmp_2.Split(' ');
-                                    all_nonPrivateClassified_classVariables.Add(words[2]);
+                                    all_nonPrivateClassified_classVariables.Add(words[1]);//!!!!!!!!!!!!!!!!!!!!!!!!!!!
                                 }
                             }
                         }
                     }
                 }
+                //Console.WriteLine(all_nonPrivateClassified_classVariables.Count());
                 return all_nonPrivateClassified_classVariables;
             }
             public static double ratio(int ct_nonPrivateClassified, int cat)
             {
                 double result = 0.0;
-                try
+                if (ct_nonPrivateClassified == 0 && cat == 0)
                 {
-                    result = ct_nonPrivateClassified / cat;
+                    result = 0;
                 }
-                catch (ArithmeticException)
+                else
                 {
-                    Console.WriteLine("Division by zero not possible");
                     result = ct_nonPrivateClassified / (cat + 0.001);
                 }
+
                 return System.Math.Round(result, 1);
             }
         }
@@ -371,19 +476,18 @@ namespace Metrics
                     }
                 }
                 double result = 0.0;
-                try
+                if (interact_set_ct == 0 && total_mutator_number == 0)
                 {
-                    result = interact_set_ct / total_mutator_number;
+                    result = 0;
                 }
-                catch (ArithmeticException)
+                else
                 {
-                    Console.WriteLine("Division by zero not possible");
                     result = interact_set_ct / (total_mutator_number + 0.001);
                 }
                 return System.Math.Round(result, 1);
             }
         }
-        public class CAAI
+        public class CAAI // NAN DÜZELDİ
         {
             public static double Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> classified_values)
             {
@@ -422,13 +526,13 @@ namespace Metrics
                     }
                 }
                 double result = 0.0;
-                try
+
+                if (interact_get_ct == 0 && total_accessor_number == 0)
                 {
-                    result = interact_get_ct / total_accessor_number;
+                    result = 0;
                 }
-                catch (ArithmeticException)
+                else
                 {
-                    Console.WriteLine("Division by zero not possible");
                     result = interact_get_ct / (total_accessor_number + 0.001);
                 }
                 return System.Math.Round(result, 1);
@@ -503,7 +607,7 @@ namespace Metrics
                 return System.Math.Round(result, 1);
             }
         }
-        public class CWMP
+        public class CWMP // NAN DÜZELDİ
         {
             public static Boolean Check(String method_classified, Microsoft.CodeAnalysis.SyntaxNode root, List<string> classified_values)
             {
@@ -580,14 +684,16 @@ namespace Metrics
                 //Console.WriteLine(classified_assigment_ct);
                 //Console.WriteLine(all_classified_methods.Count());
                 double result = 0;
-                try
+
+                if (classified_assigment_ct == 0 && all_classified_methods.Count() == 0)
                 {
-                    result = classified_assigment_ct / (double)(all_classified_methods.Count());
+                    result = 0;
                 }
-                catch (ArithmeticException e)
+                else
                 {
-                    Console.WriteLine(e);
+                    result = classified_assigment_ct / (all_classified_methods.Count() + 0.001);
                 }
+
                 return System.Math.Round(result, 1);
             }
         }
@@ -693,7 +799,7 @@ namespace Metrics
                 return System.Math.Round(result, 1);
             }
         }
-        public class UCAM
+        public class UCAM // NAN DÜZELDİ
         {
             public static double Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> classified_methods)
             {
@@ -732,11 +838,19 @@ namespace Metrics
                         not_used_methods++;
                     }
                 }
-                double result = not_used_methods / classified_methods.Count();
+                double result;
+                if (not_used_methods == 0 && classified_methods.Count() == 0)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = not_used_methods / (classified_methods.Count() + 0.001);
+                }
                 return System.Math.Round(result, 1);
             }
         }
-        public class UCAC
+        public class UCAC // NAN DÜZELDİ
         {
             public static double Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> critical_classes)
             {
@@ -779,7 +893,15 @@ namespace Metrics
                         not_used_classes++;
                     }
                 }
-                double result = not_used_classes / critical_classes.Count();
+                double result;
+                if (not_used_classes == 0 && critical_classes.Count() == 0)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = not_used_classes / (critical_classes.Count() + 0.001);
+                }
                 return System.Math.Round(result, 1);
             }
         }
@@ -801,7 +923,7 @@ namespace Metrics
                 return System.Math.Round(result, 1);
             }
         }
-        public class CSCP
+        public class CSCP // NAN DÜZELDİ
         {
             public static double Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> critical_classes)
             {
@@ -831,19 +953,18 @@ namespace Metrics
                 double result = 0.0;
                 //Console.WriteLine("serilizable_ct value"+Serializable_ct);
                 //Console.WriteLine("critical_classes.Count" + critical_classes.Count);
-                try
+                if (Serializable_ct == 0 && (double)critical_classes.Count == 0)
                 {
-                    result = Serializable_ct / ((double)critical_classes.Count);
+                    result = 0;
                 }
-                catch (ArithmeticException e)
+                else
                 {
-                    Console.WriteLine(e);
                     result = Serializable_ct / ((double)critical_classes.Count + 0.001);
                 }
                 return System.Math.Round(result, 1);
             }
         }
-        public class CSP
+        public class CSP // NAN DÜZELDİ
         {
             public static double Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> critical_classes)
             {
@@ -880,11 +1001,19 @@ namespace Metrics
                     Console.WriteLine(x);
                 }*/
                 double result = 0;
-                result = Critical_superclass / (double)(critical_classes.Count);
+
+                if (Critical_superclass == 0 && (double)(critical_classes.Count) == 0)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = Critical_superclass / ((double)(critical_classes.Count) + 0.001);
+                }
                 return System.Math.Round(result, 1);
             }
         }
-        public class CSI
+        public class CSI // NAN DÜZELDİ
         {
             public static double Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> critical_classes)
             {
@@ -956,13 +1085,12 @@ namespace Metrics
                 Console.WriteLine("possible_critical_class: " + possible_critical_class);
                 Console.WriteLine(inherit_child_class_ct);*/
                 possible_critical_class = (critical_classes.Count()) - not_possible_critical_class_ct;
-                try
+                if (inherit_child_class_ct == 0 && possible_critical_class == 0)
                 {
-                    result = inherit_child_class_ct / possible_critical_class;
+                    result = 0;
                 }
-                catch (ArithmeticException e)
+                else
                 {
-                    Console.WriteLine(e);
                     result = inherit_child_class_ct / (possible_critical_class + 0.001);
                 }
                 return System.Math.Round(result, 1);
@@ -988,7 +1116,15 @@ namespace Metrics
                         }
                     }
                 }
-                result = (double)(temp.Distinct().Count()) / (classified_methods.Count());
+
+                if ((double)(temp.Distinct().Count()) == 0 && classified_methods.Count() == 0)
+                {
+                    result = 0;
+                }
+                else
+                {
+                    result = (double)(temp.Distinct().Count() / ((classified_methods.Count()) + 0.001));
+                }
                 return System.Math.Round(result, 1);
             }
         }
@@ -1310,7 +1446,7 @@ namespace Metrics
             }
             /*foreach (var y in parent_classes)
             {
-                Console.WriteLine(y);
+                Console.WriteLine("sdasd",y);
             }*/
             foreach (var x in All_classes)
             {
@@ -1387,8 +1523,21 @@ namespace Metrics
             string[] words = root.ToString().Split('\r');
             words = root.ToString().Split('\n');
             int totalLOC = words.Length;
-            int averageConditionStatementCount = totalLOC / (numberOfIfs + numberofSwitchs);
             double complexityValue = 0;
+            int averageConditionStatementCount;
+            try
+            {
+                averageConditionStatementCount = totalLOC / (numberOfIfs + numberofSwitchs);
+            }
+            catch
+            {
+                //Console.WriteLine(e);
+                averageConditionStatementCount = 0;
+                complexityValue = 0;
+
+            }
+
+
 
             switch (averageConditionStatementCount)
             {
@@ -1419,7 +1568,7 @@ namespace Metrics
                 case int n when (n >= 240 && n < 480):
                     complexityValue = 0.2;
                     break;
-                case int n when ((n >= 480 && n < 100000000) || n == 0):
+                case int n when ((n >= 480 && n < 100000000)):
                     complexityValue = 0.1;
                     break;
             }
@@ -1524,7 +1673,7 @@ namespace Metrics
         public static void Main()
         {
             string readContents;
-            using (StreamReader streamReader = new StreamReader("exampleC#.txt", Encoding.UTF8)) //Öğrenci ödevini okuma kısmı
+            using (StreamReader streamReader = new StreamReader("C:\\Users\\deniz\\source\\repos\\GradProj\\Metrics\\Assignment.txt", Encoding.UTF8)) //Öğrenci ödevini okuma kısmı
             {
                 readContents = streamReader.ReadToEnd();
             }
@@ -1533,12 +1682,19 @@ namespace Metrics
             var root = tree.GetRoot();
             //Alttaki satırdaki gibi de metricleri çağırıp içlerindeki 'Calculate' ile ne yapıyorlarsa onları hesaplattıracağız.
             var printable = Security.CAT.Calculate(root); //CAT metricini çağırıp değerini almadan ikinci metrici çağıramıyoruz
+            DataLibrary.Models.UploadResultModel.NumofClassData = printable.Count;
             var printable_2 = Security.CMT.Calculate(root, printable); // CAT'den gelen değer buraya passlanıyor list olarak.
+            DataLibrary.Models.UploadResultModel.NumofClassMethod = printable_2.Count;
             System.Diagnostics.Debug.WriteLine("****************************************************************************");
             System.Diagnostics.Debug.WriteLine("Number of classified data: " + printable.Count());
             System.Diagnostics.Debug.WriteLine("Number of classified methods: " + printable_2.Count());
             var printable_3 = Security.CCT.Calculate(root, printable, printable_2); //Yukardakilerin döndürdüğü listeleri alıp işlem yapıyor bu arkadaş.
+            DataLibrary.Models.UploadResultModel.NumofCritClass = printable_3.Count;
             System.Diagnostics.Debug.WriteLine("Number of critical classes: " + printable_3.Count());
+            foreach (var x in printable_3)
+            {
+                System.Diagnostics.Debug.WriteLine("Critical class: " + x);
+            }
             /*foreach (var x in printable_3)
             {
                 Console.WriteLine("Critical class: "+ x);
@@ -1546,7 +1702,7 @@ namespace Metrics
             /*foreach (var item in printable_2)
             {
                 Console.WriteLine(item);
-            }*/
+            }
 
 
 
@@ -1664,7 +1820,7 @@ namespace Metrics
             double MethodLOC = Testabilty.MethodLOCAvg(root);
             System.Diagnostics.Debug.WriteLine("MerhodLOC: " + MethodLOC);
             double ClassLoc = Testabilty.ClassLOCAvg(root);
-            System.Diagnostics.Debug.WriteLine("ClassLOC:" + ClassLoc);
+            System.Diagnostics.Debug.WriteLine("ClassLOC:" + ClassLoc);*/
         }
     }
 }
