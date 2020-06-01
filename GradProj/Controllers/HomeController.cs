@@ -6,6 +6,10 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.CodeDom.Compiler;
+using System.Diagnostics;
+using Microsoft.CSharp;
+
 
 namespace GradProj.Controllers
 {
@@ -17,10 +21,22 @@ namespace GradProj.Controllers
             return View();
         }
 
+        public ActionResult CreateAssignment()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateAssignment(CreateAssignmentModel model)
+        {
+
+            System.Diagnostics.Debug.WriteLine(model.AssignmentInfo);
+            return View();
+        }
+
         public ActionResult Upload()
         {
-            ViewBag.Message = "Upload your files.";
-
             return View();
         }
 
@@ -29,11 +45,50 @@ namespace GradProj.Controllers
         {
             if (file != null && file.ContentLength > 0)
             {
-                var path = Path.Combine("C:\\Users\\deniz\\source\\repos\\GradProj\\Metrics\\", "Assignment.txt");
+                if (file.FileName.Count() > 20)
+                {
+                    ViewBag.Message = "The file name length is too long.";
+                    return View();
+                }
+                
+                var path = Path.Combine("C:\\Users\\deniz\\source\\repos\\GradProj\\Metrics\\", "Assignment.cs");
                 file.SaveAs(path);
+
+                /*CSharpCodeProvider codeProvider = new CSharpCodeProvider();
+                ICodeCompiler icc = codeProvider.CreateCompiler();
+                System.CodeDom.Compiler.CompilerParameters parameters = new CompilerParameters();
+                parameters.GenerateInMemory = true;
+                //parameters.OutputAssembly = "assignmentoutput.exe";
+                CompilerResults compileResult = icc.CompileAssemblyFromFile(parameters, "C:\\Users\\deniz\\source\\repos\\GradProj\\Metrics\\Assignment.cs");
+
+                var text = "";
+                if (compileResult.Errors.Count > 0)
+                {
+                    foreach (CompilerError CompErr in compileResult.Errors)
+                    {
+                        text = text +
+                            "Line number " + CompErr.Line +
+                            ", Error Number: " + CompErr.ErrorNumber +
+                            ", '" + CompErr.ErrorText + ";" +
+                            Environment.NewLine + Environment.NewLine;
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine(text);
+
+                if (compileResult.Errors.Count == 0)
+                {
+                    return RedirectToAction("UploadResult");
+                }
+                else
+                {
+                    ViewBag.Message = "The uploaded file cannot be compiled!";
+                    return View();
+                }*/
             }
 
             return RedirectToAction("UploadResult");
+            //return View();
         }
 
         public ActionResult UploadResult()
@@ -44,9 +99,12 @@ namespace GradProj.Controllers
 
             UploadResult.Add(new UploadResultModel
             {
-                NumofClassData = DataLibrary.Models.UploadResultModel.NumofClassData,
-                NumofClassMethod = DataLibrary.Models.UploadResultModel.NumofClassMethod,
-                NumofCritClass = DataLibrary.Models.UploadResultModel.NumofCritClass
+                RWSMS = DataLibrary.Models.UploadResultModel.RWSMS,
+                SDPMS = DataLibrary.Models.UploadResultModel.SDPMS,
+                OOPMG = DataLibrary.Models.UploadResultModel.OOPMG,
+                TUG = DataLibrary.Models.UploadResultModel.TUG,
+                TG = DataLibrary.Models.UploadResultModel.TG,
+                finalScore = DataLibrary.Models.UploadResultModel.finalScore
             });
 
             return View(UploadResult);
@@ -54,8 +112,6 @@ namespace GradProj.Controllers
 
         public ActionResult Results()
         {
-            ViewBag.Message = "View the past results.";
-
             var data = DBBridge.LoadResults();
             List<ResultModel> Results = new List<ResultModel>();
 
@@ -73,6 +129,7 @@ namespace GradProj.Controllers
             return View(Results);
         }
 
+        [Authorize(Roles ="Admin")]
         public ActionResult ViewUsers()
         {
             ViewBag.Message = "View the registered users.";
@@ -84,29 +141,70 @@ namespace GradProj.Controllers
             {
                 Users.Add(new UserModel
                 {
-                    UserId = row.InstitutionId,
+                    UserId = row.UserId,
+                    InsId = row.InstitutionId,
                     UserName = row.UserFullName,
-                    MailAddress = row.EMail
+                    MailAddress = row.Email
                 });
             }
 
             return View(Users);
         }
 
+        [Authorize(Roles = "Admin")]
         public ActionResult EditUserInfo()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditUserInfo(UserModel model)
+        public ActionResult EditUserInfo(string UserId, UserModel model)
         {
             if (ModelState.IsValid)
             {
-                return RedirectToAction("Index");
+                DBBridge.EditUser(UserId, model.InsId, model.UserName, model.MailAddress);
             }
 
+            return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult ChangeRole()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ChangeRole(string UserId, UserModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                DBBridge.EditRole(UserId, model.Role);
+            }
+            
+            return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult CreateRole()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateRole(string UserId, UserModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                DBBridge.CreateRole(UserId, model.Role);
+            }
+            
             return View();
         }
     }

@@ -241,6 +241,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\CreateAssignmentModel.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ResultModel.cs" />
@@ -305,11 +306,14 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Home\EditInfo.cshtml" />
     <Content Include="Views\Home\Results.cshtml" />
     <Content Include="Views\Home\Upload.cshtml" />
     <Content Include="Views\Home\ViewUsers.cshtml" />
     <Content Include="Views\Home\UploadResult.cshtml" />
+    <Content Include="Views\Home\EditUserInfo.cshtml" />
+    <Content Include="Views\Home\ChangeRole.cshtml" />
+    <Content Include="Views\Home\CreateRole.cshtml" />
+    <Content Include="Views\Home\CreateAssignment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

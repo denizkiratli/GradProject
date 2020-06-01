@@ -4,15 +4,12 @@
     ViewBag.Title = "ViewUsers";
 }
 
-<h2>ViewUsers</h2>
+<br /><h2>ViewUsers</h2><br />
 
-<p>
-    @Html.ActionLink("Create New", "Registration", "Login")
-</p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.UserId)
+            @Html.DisplayNameFor(model => model.InsId)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.UserName)
@@ -26,7 +23,7 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.UserId)
+            @Html.DisplayFor(modelItem => item.InsId)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.UserName)
@@ -35,8 +32,9 @@
             @Html.DisplayFor(modelItem => item.MailAddress)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+            @Html.ActionLink("Edit", "EditUserInfo", new { UserId = item.UserId, InsId = item.InsId, UserName = item.UserName, MailAddress = item.MailAddress }) |
+            @Html.ActionLink("Change Role", "ChangeRole", new { UserId = item.UserId }) |
+            @Html.ActionLink("Create Role", "CreateRole", new { UserId = item.UserId }) |
             @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
         </td>
     </tr>

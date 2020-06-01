@@ -1,13 +1,24 @@
-﻿@{ ViewBag.Title = "Upload"; }
+﻿@{ ViewBag.Title = "New Upload"; }
 
-<h2>New Upload</h2>
-<br />
+<br /><h2>New Upload</h2><hr />
+
+<div class="warning">
+    <div class="alert alert-dismissible alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <h4>Warning!</h4>
+        <p>1. The variable names must consist of 3 or more letters.</p>
+        <p>2. There should be a comment (//classified) for the important variables</p>
+        <p>3. The uploaded file should be a .cs file.</p>
+    </div>
+</div>
+<hr />
+
+<h3>@ViewBag.Message</h3>
 
 <div class="upload">
     <form action="" method="post" enctype="multipart/form-data">
-        <label for="file">Select a file:</label><br />
-        <input type="file" name="file" id="file" /><br />
+        <label for="file">Select a file:</label><br /><br />
+        <input type="file" name="file" id="file" /><br /><br />
         <input type="submit" value="Upload" />
     </form>
-</div>
-
+</div> 

@@ -24,27 +24,31 @@ namespace Metrics
 
                 foreach (var value in random)
                 {
+                    //Console.WriteLine(value);
                     var temp = value.ToFullString();
                     if (temp.Contains("static void Main"))
                     {
-                        main_list = value.ToFullString(); // main içeren classı stringe çevirim main_liste verdik.
+                        main_list = value.ToFullString(); // main içeren classı stringe çevirip main_liste verdik.
                         var tetree = CSharpSyntaxTree.ParseText(main_list); //bir daha parse
                         var teroot = tetree.GetRoot();
-                        var random_2 = teroot.DescendantNodes().OfType<MethodDeclarationSyntax>().ToList(); // şimdi methdodları ayırt ettik burada.
+                        var random_2 = teroot.DescendantNodes().OfType<MethodDeclarationSyntax>().ToList(); // methdodları ayırt ettik burada.
                         foreach (var item2 in random_2)
                         {
+                            //Console.WriteLine(item2);
                             if (item2.ToFullString().Contains("static void Main"))
                             {
                                 main_list = item2.ToFullString();
                                 var result = Regex.Split(main_list, "\r\n|\r|\n"); // main methodunu satırlara ayırıyoruz ve result arrayine hücre hücre atama yapıyoruz.
                                 foreach (var item in result)
                                 {
+                                    //Console.WriteLine(item);
                                     if (item.Contains("classified") || item.Contains("Classified")) // satırlardan //classified var mı diye check ediliyor
                                     {
                                         string[] words = item.Trim().Split(' '); //kondisyonu sağlayan satırları ' ' boşluklarına göre split ediyoruz
 
                                         foreach (var değer in words)
                                         {
+
                                             //Console.WriteLine(değer);
                                             if (!değer.Contains("var") && !değer.Contains("=") && !değer.Contains("bool") && !değer.Contains("lassified") && !değer.Contains("byte") && !değer.Contains("sbyte") && !değer.Contains("char") && !değer.Contains("decimal") && !değer.Contains("double") && !değer.Contains("float") && !değer.Contains("int") && !değer.Contains("uint") && !değer.Contains("long") && !değer.Contains("ulong") && !değer.Contains("short") && !değer.Contains("ushort") && !değer.Contains("string"))
                                             {// <= şu tarz operatorlere bakmıyoruz çünkü bizim derdimiz sadece assignmentlar ('=').
@@ -91,12 +95,11 @@ namespace Metrics
 
                 foreach (var itemu in all_classified_variables)
                 {
-                    Console.WriteLine("Classified attribute:" + itemu);
+                    //Console.WriteLine("Classified attribute:" + itemu);
                 }
                 return all_classified_variables.Distinct().ToList();
             }
         }
-
         public class CMT
         {
             public static List<string> Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> classified_values)
@@ -125,7 +128,7 @@ namespace Metrics
                                     {
                                         temp_2 = temp_2.Trim();
                                         string[] split = temp_2.Split(' ', '(');
-                                        if (split[0] == "abstract" && (split[1] == "public" || split[1] == "private" || split[0] == "protected"))
+                                        if (split[0] == "abstract" && (split[1] == "public" || split[1] == "private" || split[1] == "protected"))
                                         {
                                             all_classified_methods.Add(split[3]);
                                             break;
@@ -174,7 +177,7 @@ namespace Metrics
                 }
                 foreach (var x in all_classified_methods)
                 {
-                    Console.WriteLine(x);
+                    //Console.WriteLine("Classified METHODS:" + x);
                 }
                 return all_classified_methods.Distinct().ToList();
             }
@@ -191,25 +194,16 @@ namespace Metrics
                 string[] words;
                 List<string> all_critical_classes = new List<string>();
 
-
                 foreach (var value in random)
                 {
-                    //Console.WriteLine(value);
                     var temp = value.ToFullString();
-
                     if (temp.Contains("static void Main")) { continue; }
                     else
                     {
-                        //Console.WriteLine(temp);
-
-
                         foreach (var item in temp_2)
                         {
-                            //Console.WriteLine(item);
-
                             if (temp.Contains(item))
                             {
-
                                 number_of_critical_classes++;
                                 words = temp.Trim().Split(' ', '{');
                                 if ((words[0] == "public" || words[0] == "private" || words[0] == "abstract") && (words[1] == "class"))
@@ -327,7 +321,7 @@ namespace Metrics
                 foreach (var value in random)
                 {
                     var temp = value.ToFullString();
-                    if (temp.Contains("class Program")) { continue; }
+                    if (temp.Contains("static void Main")) { continue; }
                     else
                     {
                         var temp_tree = CSharpSyntaxTree.ParseText(temp);
@@ -379,7 +373,7 @@ namespace Metrics
                 foreach (var value in random)
                 {
                     var temp = value.ToFullString();
-                    if (temp.Contains("class Program")) { continue; }
+                    if (temp.Contains("static void Main")) { continue; }
                     else
                     {
                         var temp_tree = CSharpSyntaxTree.ParseText(temp);
@@ -451,7 +445,7 @@ namespace Metrics
                 foreach (var value in random)
                 {
                     var temp = value.ToFullString();
-                    if (temp.Contains("class Program")) { continue; }
+                    if (temp.Contains("static void Main")) { continue; }
                     else
                     {
                         var temp_tree = CSharpSyntaxTree.ParseText(temp);
@@ -497,7 +491,7 @@ namespace Metrics
                 foreach (var value in random)
                 {
                     var temp = value.ToFullString();
-                    if (temp.Contains("class Program")) { continue; }
+                    if (temp.Contains("static void Main")) { continue; }
                     else
                     {
                         var temp_tree = CSharpSyntaxTree.ParseText(temp);
@@ -653,7 +647,7 @@ namespace Metrics
                 foreach (var value in random)
                 {
                     var temp = value.ToFullString();
-                    if (temp.Contains("class Program")) { continue; }
+                    if (temp.Contains("static void Main")) { continue; }
                     else
                     {
                         var temp_tree = CSharpSyntaxTree.ParseText(temp);
@@ -701,18 +695,17 @@ namespace Metrics
         {
             public static double Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> all_classified_variables, double number_of_critical_classes)
             {
-                double All_classified_attribute_numbers = all_classified_variables.Count();
-                //Console.WriteLine(All_classified_attribute_numbers);           
-                //Console.WriteLine(number_of_critical_classes);
+
+                var all_classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>().ToList().Count();        //bak buna tekrar
                 double result = 0.0;
                 try
                 {
-                    result = number_of_critical_classes / All_classified_attribute_numbers;
+                    result = number_of_critical_classes / all_classes;
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    result = number_of_critical_classes / (All_classified_attribute_numbers + 0.001);
+                    result = number_of_critical_classes / (all_classes + 0.001);
                 }
                 return System.Math.Round(result, 1);
             }
@@ -763,7 +756,7 @@ namespace Metrics
                 }
                 foreach (var x in random_3)
                 {
-                    if (x.ToFullString().Contains("class Program") || x.ToFullString().Contains("Main")) { continue; }
+                    if (x.ToFullString().Contains("static void Main")) { continue; }
                     else
                     {
                         foreach (var y in temp) //mainde kullanılan classlar tempde
@@ -863,7 +856,7 @@ namespace Metrics
                 }
                 foreach (var value in random)
                 {
-                    if (value.ToFullString().Contains("class Program")) { continue; }
+                    if (value.ToFullString().Contains("static void Main")) { continue; }
                     else
                     {
                         foreach (var x in critical_classes)
@@ -936,7 +929,7 @@ namespace Metrics
                 foreach (var x in random)
                 {
                     var all_classes = x.ToFullString();
-                    if (all_classes.Contains("class Program")) { continue; }
+                    if (all_classes.Contains("static void Main")) { continue; }
                     foreach (var crit in critical_classes)
                     {
                         if (all_classes.Contains(crit))
@@ -966,7 +959,7 @@ namespace Metrics
         }
         public class CSP // NAN DÜZELDİ
         {
-            public static double Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> critical_classes)
+            public static double Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> critical_classes)//string : bak console.writelineda da olabilir.
             {
                 var random = root.DescendantNodes().OfType<ClassDeclarationSyntax>().ToList();
                 List<string> all_super_classes = new List<string>();
@@ -976,12 +969,18 @@ namespace Metrics
                 foreach (var x in random)
                 {
                     var temp = x.ToFullString();
-                    if (temp.Contains("class Program")) { continue; }
+                    if (temp.Contains("static void Main")) { continue; }
                     if (temp.Contains(":"))
                     {
-                        words = temp.Trim().Split(' ');
-                        all_super_classes.Add(words[4].TrimEnd());
-                        //Console.WriteLine(words[4]);
+                        words = temp.Trim().Split(' ', '{', '\r', '\n');
+                        if (words[2] == ":")
+                        {
+                            all_super_classes.Add(words[3].TrimEnd());
+                        }
+                        else if (words[3] == ":")
+                        {
+                            all_super_classes.Add(words[4].TrimEnd());
+                        }
                     }
                 }
                 foreach (var x in critical_classes)
@@ -1027,7 +1026,7 @@ namespace Metrics
                 foreach (var x in random)
                 {
                     var temp = x.ToFullString();
-                    if (temp.Contains("class Program")) { continue; }
+                    if (temp.Contains("static void Main")) { continue; }
                     if (temp.Contains(":"))
                     {
                         words = temp.Trim().Split(' ', '{');
@@ -1050,7 +1049,7 @@ namespace Metrics
                 foreach (var x in random)
                 {
                     var temp = x.ToFullString();
-                    if (temp.Contains("class Program")) { continue; }
+                    if (temp.Contains("static void Main")) { continue; }
                     if (temp.Contains(":"))
                     {
                         words = temp.Trim().Split(' ');
@@ -1345,7 +1344,7 @@ namespace Metrics
             foreach (var x in All_classes)
             {
                 var temp = x.ToFullString();
-                if (temp.Contains("class Program")) { continue; }
+                if (temp.Contains("static void Main")) { continue; }
                 if (temp.Contains(":"))
                 {
                     words = temp.Trim().Split(' ');
@@ -1360,7 +1359,7 @@ namespace Metrics
             foreach (var x in All_classes)
             {
                 var temp = x.ToFullString();
-                if (temp.Contains("class Program")) { continue; }
+                if (temp.Contains("static void Main")) { continue; }
                 if (temp.Contains(":"))
                 {
                     inherited_classes.Add(temp);
@@ -1436,7 +1435,7 @@ namespace Metrics
             foreach (var x in All_classes)
             {
                 var temp = x.ToFullString();
-                if (temp.Contains("class Program")) { continue; }
+                if (temp.Contains("static void Main")) { continue; }
                 if (temp.Contains(":"))
                 {
                     words = temp.Trim().Split(' ');
@@ -1451,7 +1450,7 @@ namespace Metrics
             foreach (var x in All_classes)
             {
                 var temp = x.ToFullString();
-                if (temp.Contains("class Program")) { continue; }
+                if (temp.Contains("static void Main")) { continue; }
                 if (temp.Contains(":"))
                 {
                     inherited_classes.Add(temp);
@@ -1612,11 +1611,11 @@ namespace Metrics
             double LOCvalue = 0;
             int totalNumOfClassLOC = 0;
             var allClasses = root.DescendantNodes().OfType<ClassDeclarationSyntax>().ToList();
-            int numOfAllMethods = allClasses.Count();
+            int numOfAllClasses = allClasses.Count();
             string[] words;
             foreach (var x in allClasses)
             {
-                if (x.ToFullString().Contains("class Program"))
+                if (x.ToFullString().Contains("static void Main"))
                 {
                     continue;
                 }
@@ -1628,7 +1627,7 @@ namespace Metrics
                 }
 
             }
-            switch (totalNumOfClassLOC / numOfAllMethods)
+            switch (totalNumOfClassLOC / numOfAllClasses)
             {
                 case int n when (n >= 0 && n <= 10):
                     LOCvalue = 0;
@@ -1673,7 +1672,7 @@ namespace Metrics
         public static void Main()
         {
             string readContents;
-            using (StreamReader streamReader = new StreamReader("C:\\Users\\deniz\\source\\repos\\GradProj\\Metrics\\Assignment.txt", Encoding.UTF8)) //Öğrenci ödevini okuma kısmı
+            using (StreamReader streamReader = new StreamReader("C:\\Users\\deniz\\source\\repos\\GradProj\\Metrics\\Assignment.cs", Encoding.UTF8)) //Öğrenci ödevini okuma kısmı
             {
                 readContents = streamReader.ReadToEnd();
             }
@@ -1682,43 +1681,26 @@ namespace Metrics
             var root = tree.GetRoot();
             //Alttaki satırdaki gibi de metricleri çağırıp içlerindeki 'Calculate' ile ne yapıyorlarsa onları hesaplattıracağız.
             var printable = Security.CAT.Calculate(root); //CAT metricini çağırıp değerini almadan ikinci metrici çağıramıyoruz
-            DataLibrary.Models.UploadResultModel.NumofClassData = printable.Count;
             var printable_2 = Security.CMT.Calculate(root, printable); // CAT'den gelen değer buraya passlanıyor list olarak.
-            DataLibrary.Models.UploadResultModel.NumofClassMethod = printable_2.Count;
-            System.Diagnostics.Debug.WriteLine("****************************************************************************");
-            System.Diagnostics.Debug.WriteLine("Number of classified data: " + printable.Count());
-            System.Diagnostics.Debug.WriteLine("Number of classified methods: " + printable_2.Count());
             var printable_3 = Security.CCT.Calculate(root, printable, printable_2); //Yukardakilerin döndürdüğü listeleri alıp işlem yapıyor bu arkadaş.
-            DataLibrary.Models.UploadResultModel.NumofCritClass = printable_3.Count;
-            System.Diagnostics.Debug.WriteLine("Number of critical classes: " + printable_3.Count());
-            foreach (var x in printable_3)
-            {
-                System.Diagnostics.Debug.WriteLine("Critical class: " + x);
-            }
+            //System.Diagnostics.Debug.WriteLine("Number of critical classes: " + printable_3.Count());
             /*foreach (var x in printable_3)
             {
-                Console.WriteLine("Critical class: "+ x);
+                System.Diagnostics.Debug.WriteLine("Critical class: " + x);
             }*/
-            /*foreach (var item in printable_2)
-            {
-                Console.WriteLine(item);
-            }
-
-
 
             var printable_40 = Security.CCDA.Calculate(root);
-            System.Diagnostics.Debug.WriteLine("Number of Non-Private Class Attributes: " + printable_40.Count());
-            
+            //System.Diagnostics.Debug.WriteLine("Number of Non-Private Class Attributes: " + printable_40.Count());
             var printable_50 = Security.CIDA.Calculate(root, printable_40); // Calismasi icin CCDA'dan gelen list gerekli.
-            System.Diagnostics.Debug.WriteLine("Number of Non-Private Instance Attributes: " + printable_50.Count());
+            //System.Diagnostics.Debug.WriteLine("Number of Non-Private Instance Attributes: " + printable_50.Count());
             var printable_60 = Security.COA.Calculate(root, printable);
-            System.Diagnostics.Debug.WriteLine("Number of Non-Private Methods: " + printable_60.Count());
+            //System.Diagnostics.Debug.WriteLine("Number of Non-Private Methods: " + printable_60.Count());
             var printable_70 = Security.CIDA.ratio(printable_50.Count(), printable.Count());
-            System.Diagnostics.Debug.WriteLine("Ratio of CIDA: " + printable_70);
+            //System.Diagnostics.Debug.WriteLine("Ratio of CIDA: " + printable_70);
             var printable_80 = Security.CCDA.ratio(printable_40.Count(), printable.Count());
-            System.Diagnostics.Debug.WriteLine("Ratio of CCDA: " + printable_80);
+            //System.Diagnostics.Debug.WriteLine("Ratio of CCDA: " + printable_80);
             var printable_90 = Security.COA.ratio(printable_2.Count(), printable_60.Count());
-            System.Diagnostics.Debug.WriteLine("Ratio of COA: " + printable_90);
+            //System.Diagnostics.Debug.WriteLine("Ratio of COA: " + printable_90);
             bool printable_4 = Security.RPB.Calculate(tree);
             double printRPB = 0;
             if (printable_4)
@@ -1729,37 +1711,37 @@ namespace Metrics
             {
                 printRPB += 0.0;
             }
-            System.Diagnostics.Debug.WriteLine("RPB: " + printable_4);
+            //System.Diagnostics.Debug.WriteLine("RPB: " + printable_4);
             var printable_12 = Security.CMAI.Calculate(root, printable);
-            System.Diagnostics.Debug.WriteLine("CMAI: " + printable_12);
+            //System.Diagnostics.Debug.WriteLine("CMAI: " + printable_12);
             var printable_11 = Security.CAAI.Calculate(root, printable);
-            System.Diagnostics.Debug.WriteLine("CAAI: " + printable_11);
+            //System.Diagnostics.Debug.WriteLine("CAAI: " + printable_11);
             var printable_15 = Security.CAIW.Calculate(root, printable, readContents); //Classified attributeların olduğu listeyi ve tüm txt orijinal kodu buna passlıyoruz
-            System.Diagnostics.Debug.WriteLine("CAIW: " + printable_15);
+            //System.Diagnostics.Debug.WriteLine("CAIW: " + printable_15);
             var printable_13 = Security.CMW.Calculate(root, printable_2);
-            System.Diagnostics.Debug.WriteLine("cmw: " + printable_13);
+            //System.Diagnostics.Debug.WriteLine("cmw: " + printable_13);
             var printable_16 = Security.CWMP.Calculate(root, printable, printable_2, readContents);
-            System.Diagnostics.Debug.WriteLine("CWMP: " + printable_16);
+            //System.Diagnostics.Debug.WriteLine("CWMP: " + printable_16);
             var printable_14 = Security.CCC.Calculate(root, printable, printable_3.Count());
-            System.Diagnostics.Debug.WriteLine("CCC: " + printable_14);
+            //System.Diagnostics.Debug.WriteLine("CCC: " + printable_14);
             var printable_17 = Security.UACA.Calculate(root, printable, printable_3);
-            System.Diagnostics.Debug.WriteLine("UACA: " + printable_17);
+            //System.Diagnostics.Debug.WriteLine("UACA: " + printable_17);
             var printUCAM = Security.UCAM.Calculate(root, printable_2);
-            System.Diagnostics.Debug.WriteLine("UCAM ratio:" + printUCAM);
+            //System.Diagnostics.Debug.WriteLine("UCAM ratio:" + printUCAM);
             var printUCAC = Security.UCAC.Calculate(root, printable_3);
-            System.Diagnostics.Debug.WriteLine("UACA ratio:" + printUCAC);
+            //System.Diagnostics.Debug.WriteLine("UACA ratio:" + printUCAC);
             var printCDP = Security.CDP.Calculate(root, printable_3.Count());
-            System.Diagnostics.Debug.WriteLine("cdp: " + printCDP);
+            //System.Diagnostics.Debug.WriteLine("cdp: " + printCDP);
             var printCSCP = Security.CSCP.Calculate(root, printable_3);
-            System.Diagnostics.Debug.WriteLine("CSCP ratio:" + printCSCP);
+            //System.Diagnostics.Debug.WriteLine("CSCP ratio:" + printCSCP);
             var printCSP = Security.CSP.Calculate(root, printable_3);
-            System.Diagnostics.Debug.WriteLine("CSP ratio:" + printCSP);
+            //System.Diagnostics.Debug.WriteLine("CSP ratio:" + printCSP);
             var printCSI = Security.CSI.Calculate(root, printable_3);
-            System.Diagnostics.Debug.WriteLine("CSI ratio: " + printCSI);
+            //System.Diagnostics.Debug.WriteLine("CSI ratio: " + printCSI);
             var printCMI = Security.CMI.Calculate(root, printable_2, printable_3);
-            System.Diagnostics.Debug.WriteLine("CMI ratio:" + printCMI);
+            //System.Diagnostics.Debug.WriteLine("CMI ratio:" + printCMI);
             var printCAI = Security.CAI.Calculate(root, printable, printable_3);
-            System.Diagnostics.Debug.WriteLine("CAI ratio:" + printCAI);
+            //System.Diagnostics.Debug.WriteLine("CAI ratio:" + printCAI);
             //-------------------------------------------------------
             //table 2 
             var printRCA = Security.RandW_Security_Metrics.RCA(printable_70, printable_80, printCAI);
@@ -1770,6 +1752,8 @@ namespace Metrics
             var printWCC = Security.RandW_Security_Metrics.WCC(printable_14, printable_17, printCSCP, printCSI);
             var printSAM = Security.RandW_Security_Metrics.SAM(printable.Count, printable_2.Count, printable_3.Count);
             var RandW_Security_Metrics_result = printRCA + printWCA + printRCM + printWCM + printRCC + printWCC + printSAM;
+            var RWSMS = System.Math.Round((RandW_Security_Metrics_result / 59) * 100, 1);
+            DataLibrary.Models.UploadResultModel.RWSMS = RWSMS;
             System.Diagnostics.Debug.WriteLine("Read & Write Security Metric Score is: " + System.Math.Round((RandW_Security_Metrics_result / 59) * 100, 1)); // 59 alabileceği max değer o yüzden bu değerle %liğe çviriyoruz
             //TABLE 3---------------------------------------------------------------
             var printPLP = Security.Security_Design_Principle_Metrics.PLP(printWCA, printWCM, printWCC);
@@ -1780,15 +1764,17 @@ namespace Metrics
             var printPI = Security.Security_Design_Principle_Metrics.PI(printWCC);
             var printPEM = Security.Security_Design_Principle_Metrics.PEM(printSAM);
             var Total_security_Index = printPLP + printPRAS + printPSWL + printPFSD + printPLCM + printPI + printPEM;//TSI METRIC
+            var SDPMS = System.Math.Round((Total_security_Index / 123) * 100, 1);
+            DataLibrary.Models.UploadResultModel.SDPMS = SDPMS;
             System.Diagnostics.Debug.WriteLine("Security Design Principle Metric Score is : " + System.Math.Round((Total_security_Index / 123) * 100, 1)); // 123 alabileceği max değer o yüzden bu değerle %liğe çviriyoruz
             //others--------------------------------------------------------------------------
             System.Diagnostics.Debug.WriteLine("----------------------------------------------------------------");
             int check_Poly = OOP_Metrics.Check_polymorphism(root);//true veya false dönüyor bunu 1 0 yap 
-            System.Diagnostics.Debug.WriteLine("does program contains polymorphism: " + check_Poly);
+            //System.Diagnostics.Debug.WriteLine("does program contains polymorphism: " + check_Poly);
             int check_Constructor = OOP_Metrics.Check_Constructor(root);//true veya false dönüyor bunu 1 0 yap 
-            System.Diagnostics.Debug.WriteLine("does program contains constructor: " + check_Constructor);
+            //System.Diagnostics.Debug.WriteLine("does program contains constructor: " + check_Constructor);
             int check_Enum = OOP_Metrics.Check_Enum(root);//true veya false dönüyor bunu 1 0 yap 
-            System.Diagnostics.Debug.WriteLine("does program contains Enum: " + check_Enum);
+            //System.Diagnostics.Debug.WriteLine("does program contains Enum: " + check_Enum);
             int check_Inheritance = 0;//true veya false dönüyor bunu 1 0 yap            
             if (check_Poly == 1)
             {
@@ -1798,29 +1784,40 @@ namespace Metrics
             {
                 check_Inheritance = OOP_Metrics.Check_Inheritance(root);
             }
-            System.Diagnostics.Debug.WriteLine("does program contains Inheritance: " + check_Inheritance);
+            //System.Diagnostics.Debug.WriteLine("does program contains Inheritance: " + check_Inheritance);
             int check_Struct_usage = OOP_Metrics.Check_Sturct(root);
-            System.Diagnostics.Debug.WriteLine("Struct usage(1:true--0:false):" + check_Struct_usage);
+            //System.Diagnostics.Debug.WriteLine("Struct usage(1:true--0:false):" + check_Struct_usage);
             int Total_Grade_of_OOP_Metrics = OOP_Metrics.Total_result_of_OOP_Metrics(check_Poly, check_Constructor, check_Enum, check_Inheritance, check_Struct_usage);
-            System.Diagnostics.Debug.WriteLine("total grade of OOP Metrics:" + Total_Grade_of_OOP_Metrics);
+            var OOPMG = Total_Grade_of_OOP_Metrics;
+            DataLibrary.Models.UploadResultModel.OOPMG = OOPMG;
+            System.Diagnostics.Debug.WriteLine("OOP Metrics Grade:" + Total_Grade_of_OOP_Metrics);
             int check_Loop_usage = Technique_Used.Check_Loop_Usage(root);
-            System.Diagnostics.Debug.WriteLine("Loop usage result:" + check_Loop_usage);
+            //System.Diagnostics.Debug.WriteLine("Loop usage result:" + check_Loop_usage);
             int check_tryCatch_usage = Technique_Used.Check_tryCatch_Usage(root);
-            System.Diagnostics.Debug.WriteLine("Try_Catch usage:" + check_tryCatch_usage);
+            //System.Diagnostics.Debug.WriteLine("Try_Catch usage:" + check_tryCatch_usage);
             int check_ifElse_usage = Technique_Used.Check_ifElse_usage(root);
-            System.Diagnostics.Debug.WriteLine("İf else usage:" + check_ifElse_usage);
+            //System.Diagnostics.Debug.WriteLine("İf else usage:" + check_ifElse_usage);
             int check_Switch_Case_usage = Technique_Used.Check_Switch_Case_usage(root);
-            System.Diagnostics.Debug.WriteLine("Switch Case usage:" + check_Switch_Case_usage);
+            //System.Diagnostics.Debug.WriteLine("Switch Case usage:" + check_Switch_Case_usage);
             int Total_grade_of_tech_usage = Technique_Used.Total_result_of_Technique_used(check_Loop_usage, check_tryCatch_usage, check_ifElse_usage, check_Switch_Case_usage);
-            System.Diagnostics.Debug.WriteLine("total grade of tecnique usage:" + Total_grade_of_tech_usage);
+            var TUG = Total_grade_of_tech_usage;
+            DataLibrary.Models.UploadResultModel.TUG = TUG;
+            System.Diagnostics.Debug.WriteLine("Tecnique Usage Grade:" + Total_grade_of_tech_usage);
             //others--------------------------------------------------------------------------
 
             double complexityValue = Testabilty.Branching(root);
-            System.Diagnostics.Debug.WriteLine("Branching: " + complexityValue);
+            //System.Diagnostics.Debug.WriteLine("Branching: " + complexityValue);
             double MethodLOC = Testabilty.MethodLOCAvg(root);
-            System.Diagnostics.Debug.WriteLine("MerhodLOC: " + MethodLOC);
+            //System.Diagnostics.Debug.WriteLine("MerhodLOC: " + MethodLOC);
             double ClassLoc = Testabilty.ClassLOCAvg(root);
-            System.Diagnostics.Debug.WriteLine("ClassLOC:" + ClassLoc);*/
+            //System.Diagnostics.Debug.WriteLine("ClassLOC:" + ClassLoc);
+            float total = 3 - (float)(complexityValue + MethodLOC + ClassLoc);
+            var TG = System.Math.Round((total / 3) * 100);
+            DataLibrary.Models.UploadResultModel.TG = TG;
+            System.Diagnostics.Debug.WriteLine("Testabilty grade: " + System.Math.Round((total / 3) * 100), 2);
+            double finalScore = (RWSMS + SDPMS + OOPMG + TUG + TG) / 5;
+            DataLibrary.Models.UploadResultModel.finalScore = finalScore;
+            System.Diagnostics.Debug.WriteLine("Fina Score: " + finalScore);
         }
     }
 }
