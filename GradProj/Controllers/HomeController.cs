@@ -30,8 +30,13 @@ namespace GradProj.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult CreateAssignment(CreateAssignmentModel model)
         {
-
+            System.Diagnostics.Debug.WriteLine(model.AssignmentName);
             System.Diagnostics.Debug.WriteLine(model.AssignmentInfo);
+            if (ModelState.IsValid)
+            {
+                DBBridge.CreateAssignment(model.AssignmentName, model.AssignmentInfo);
+            }
+            
             return View();
         }
 

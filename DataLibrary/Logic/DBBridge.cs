@@ -68,5 +68,18 @@ namespace DataLibrary.Logic
 
             return SqlAccess.UseData(sql, data);
         }
+
+        public static int CreateAssignment(string AssignmentName, string AssignmentInfo)
+        {
+            CreateAssignmentModel data = new CreateAssignmentModel
+            {
+                AsName = AssignmentName,
+                AsInfo = AssignmentInfo
+            };
+
+            string sql = @"INSERT INTO dbo.AssignmentData (AsName, AsInfo) VALUES (@AsName, @AsInfo);";
+
+            return SqlAccess.UseData(sql, data);
+        }
     }
 }

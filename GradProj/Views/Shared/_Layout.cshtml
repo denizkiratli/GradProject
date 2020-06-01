@@ -21,11 +21,15 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
+                    @if (Roles.IsUserInRole("Instructor") || Roles.IsUserInRole("Admin"))
+                    {
+                        <li>@Html.ActionLink("Create New Assignment", "CreateAssignment", "Home")</li>
+                    }
                     @if (Roles.IsUserInRole("Student"))
                     {
                         <li>@Html.ActionLink("New Upload", "Upload", "Home")</li>
                     }
-                    @if (Roles.IsUserInRole("Instructor") || Roles.IsUserInRole("Student"))
+                    @if ((Roles.IsUserInRole("Instructor") || Roles.IsUserInRole("Student")) || Roles.IsUserInRole("Admin"))
                     {
                         <li>@Html.ActionLink("Results", "Results", "Home")</li>
                     }
