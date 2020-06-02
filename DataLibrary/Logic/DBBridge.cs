@@ -23,9 +23,23 @@ namespace DataLibrary.Logic
 
         public static List<ResultModel> LoadResults()
         {
-            string sql = @"SELECT us.InstitutionId, res.ResId, assign.AsName, res.Score, res.TotAsNum FROM dbo.ResultData res INNER JOIN dbo.AssignmentData assign ON res.AsId = assign.AsId INNER JOIN dbo.Users us ON res.UserId = us.UserId;";
+            string sql = @"SELECT us.InstitutionId, res.ResId, assign.AsName, res.Score, res.TotAsNum FROM dbo.ResultData res INNER JOIN dbo.AssignmentData assign ON res.AsId = assign.AsId LEFT JOIN dbo.Users us ON res.UserId = us.UserId WHERE res.ResId IS NOT NULL;";
 
             return SqlAccess.LoadData<ResultModel>(sql);
+        }
+
+        public static int CreateResult(string UserId, int AsId, double Score)
+        {
+            ResultModel data = new ResultModel
+            {
+                UserId = UserId,
+                AssignmentId = AsId,
+                Score = Score
+            };
+
+            string sql = @"INSERT INTO dbo.ResultData (UserId, AsId, Score) VALUES (@UserId, @AssignmentId, @Score);";
+
+            return SqlAccess.UseData(sql, data);
         }
 
         public static int EditUser(string UserId, int InsId, string UserFullName, string Email)
@@ -38,7 +52,7 @@ namespace DataLibrary.Logic
                 Email = Email
             };
 
-            string sql = @"UPDATE dbo.Users SET InstitutionId = @InstitutionId, UserFullName = @UserFullName, Email = @Email, WHERE UserId = @UserId;";
+            string sql = @"UPDATE dbo.Users SET InstitutionId = @InstitutionId, UserFullName = @UserFullName, Email = @Email WHERE UserId = @UserId;";
 
             return SqlAccess.UseData(sql, data);
         }

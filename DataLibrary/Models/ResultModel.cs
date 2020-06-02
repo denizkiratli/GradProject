@@ -8,9 +8,12 @@ namespace DataLibrary.Models
 {
     public class ResultModel
     {
-        public int ResultId { get; set; }
-        public string AssignmentName { get; set; }
+        public string UserId { get; set; }
+        public int ResId { get; set; }
+        public int InstitutionId { get; set; }
+        public int AssignmentId { get; set; }
+        public string AsName { get; set; }
         public double Score { get; set; }
-        public int TotalAssignmentNumber { get; set; }
+        public int TotAsNum { get; set; }
     }
 }

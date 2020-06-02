@@ -22,5 +22,6 @@ namespace GradProj.Models
 
         [Display(Name = "Number of Attendance on Assignment")]
         public int NumberofAttendance { get; set; }
+        public int AssignmentId { get; set; }
     }
 }

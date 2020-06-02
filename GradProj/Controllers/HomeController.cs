@@ -9,6 +9,7 @@ using System.Web.Mvc;
 using System.CodeDom.Compiler;
 using System.Diagnostics;
 using Microsoft.CSharp;
+using Microsoft.AspNet.Identity;
 
 
 namespace GradProj.Controllers
@@ -21,20 +22,24 @@ namespace GradProj.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin, Instructor")]
         public ActionResult CreateAssignment()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin, Instructor")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateAssignment(CreateAssignmentModel model)
         {
-            System.Diagnostics.Debug.WriteLine(model.AssignmentName);
-            System.Diagnostics.Debug.WriteLine(model.AssignmentInfo);
             if (ModelState.IsValid)
             {
-                DBBridge.CreateAssignment(model.AssignmentName, model.AssignmentInfo);
+                var info = DBBridge.CreateAssignment(model.AssignmentName, model.AssignmentInfo);
+                if (info == 1)
+                    ViewBag.Message = "The assignment is created successfully!";
+                else
+                    ViewBag.Message = "The assignment cannot be created!";
             }
             
             return View();
@@ -46,7 +51,7 @@ namespace GradProj.Controllers
         }
 
         [HttpPost]
-        public ActionResult Upload(HttpPostedFileBase file)
+        public ActionResult Upload(HttpPostedFileBase file, ResultModel model)
         {
             if (file != null && file.ContentLength > 0)
             {
@@ -91,12 +96,17 @@ namespace GradProj.Controllers
                     return View();
                 }*/
             }
+            else
+            {
+                ViewBag.Message = "The file is empty!";
+                return View();
+            }
 
-            return RedirectToAction("UploadResult");
+            return RedirectToAction("UploadResult", new { AssignmentId = model.AssignmentId });
             //return View();
         }
 
-        public ActionResult UploadResult()
+        public ActionResult UploadResult(int AssignmentId)
         {
             Metrics.Program.Main();
 
@@ -112,6 +122,10 @@ namespace GradProj.Controllers
                 finalScore = DataLibrary.Models.UploadResultModel.finalScore
             });
 
+            var UserId = User.Identity.GetUserId();
+            var Score = DataLibrary.Models.UploadResultModel.finalScore;
+            DBBridge.CreateResult(UserId, AssignmentId, Score);
+
             return View(UploadResult);
         }
 
@@ -124,10 +138,11 @@ namespace GradProj.Controllers
             {
                 Results.Add(new ResultModel
                 {
-                    ResultId = row.ResultId,
-                    AssignmentName = row.AssignmentName,
+                    ResultId = row.ResId,
+                    InstitutionId = row.InstitutionId,
+                    AssignmentName = row.AsName,
                     Score = row.Score,
-                    NumberofAttendance = row.TotalAssignmentNumber
+                    NumberofAttendance = row.TotAsNum
                 });
             }
 
@@ -137,8 +152,6 @@ namespace GradProj.Controllers
         [Authorize(Roles ="Admin")]
         public ActionResult ViewUsers()
         {
-            ViewBag.Message = "View the registered users.";
-
             var data = DBBridge.LoadUsers();
             List<UserModel> Users = new List<UserModel>();
 
@@ -157,7 +170,7 @@ namespace GradProj.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public ActionResult EditUserInfo()
+        public ActionResult EditUserInfo(int InsId, string UserName, string MailAddress)
         {
             return View();
         }
@@ -169,7 +182,12 @@ namespace GradProj.Controllers
         {
             if (ModelState.IsValid)
             {
-                DBBridge.EditUser(UserId, model.InsId, model.UserName, model.MailAddress);
+                var info = DBBridge.EditUser(UserId, model.InsId, model.UserName, model.MailAddress);
+                
+                if (info == 1)
+                    ViewBag.Message = "The user information is changed successfully!";
+                else
+                    ViewBag.Message = "The user information cannot be changed!";
             }
 
             return View();
@@ -188,7 +206,12 @@ namespace GradProj.Controllers
         {
             if (ModelState.IsValid)
             {
-                DBBridge.EditRole(UserId, model.Role);
+                var info = DBBridge.EditRole(UserId, model.Role);
+
+                if (info == 1)
+                    ViewBag.Message = "The user role is changed successfully!";
+                else
+                    ViewBag.Message = "The user role cannot be changed!";
             }
             
             return View();
@@ -207,7 +230,12 @@ namespace GradProj.Controllers
         {
             if (ModelState.IsValid)
             {
-                DBBridge.CreateRole(UserId, model.Role);
+                var info = DBBridge.CreateRole(UserId, model.Role);
+
+                if (info == 1)
+                    ViewBag.Message = "The user role is created successfully!";
+                else
+                    ViewBag.Message = "The user role cannot be created!";
             }
             
             return View();

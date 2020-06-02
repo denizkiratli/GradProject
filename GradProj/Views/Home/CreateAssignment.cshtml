@@ -4,7 +4,9 @@
     ViewBag.Title = "CreateAssignment";
 }
 
-<h2>Create a New Assignment</h2>
+<h2>Create a New Assignment</h2><br />
+
+@ViewBag.Message
 
 
 @using (Html.BeginForm()) 
@@ -25,7 +27,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.AssignmentInfo, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextAreaFor(model => model.AssignmentInfo, new { rows =10, htmlAttributes = new { @class = "form-control" } })
+                @Html.TextAreaFor(model => model.AssignmentInfo, new {  htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.AssignmentInfo, "", new { @class = "text-danger" })
             </div>
         </div>
