@@ -27,23 +27,23 @@
     </tr>
 
 @foreach (var item in Model) {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.ResultId)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.InstitutionId)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.AssignmentName)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Score)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.NumberofAttendance)
-    </td>
-</tr>
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.ResultId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.InstitutionId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.AssignmentName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Score)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NumberofAttendance)
+        </td>
+    </tr>
 }
 
 </table>

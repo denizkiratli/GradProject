@@ -10,7 +10,7 @@ using System.CodeDom.Compiler;
 using System.Diagnostics;
 using Microsoft.CSharp;
 using Microsoft.AspNet.Identity;
-
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 
 namespace GradProj.Controllers
 {
@@ -19,7 +19,21 @@ namespace GradProj.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            var data = DBBridge.LoadAssignments();
+            List<AssignmentModel> Assignments = new List<AssignmentModel>();
+
+            foreach (var row in data)
+            {
+                Assignments.Add(new AssignmentModel
+                {
+                    AssignmentId = row.AsId,
+                    AssignmentName = row.AsName,
+                    AssignmentInfo = row.AsInfo,
+                    AssignmentDate = row.AsDate
+                });
+            }
+            
+            return View(Assignments);
         }
 
         [Authorize(Roles = "Admin, Instructor")]
@@ -31,7 +45,7 @@ namespace GradProj.Controllers
         [Authorize(Roles = "Admin, Instructor")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CreateAssignment(CreateAssignmentModel model)
+        public ActionResult CreateAssignment(AssignmentModel model)
         {
             if (ModelState.IsValid)
             {

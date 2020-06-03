@@ -85,7 +85,7 @@ namespace DataLibrary.Logic
 
         public static int CreateAssignment(string AssignmentName, string AssignmentInfo)
         {
-            CreateAssignmentModel data = new CreateAssignmentModel
+            AssignmentModel data = new AssignmentModel
             {
                 AsName = AssignmentName,
                 AsInfo = AssignmentInfo
@@ -94,6 +94,13 @@ namespace DataLibrary.Logic
             string sql = @"INSERT INTO dbo.AssignmentData (AsName, AsInfo) VALUES (@AsName, @AsInfo);";
 
             return SqlAccess.UseData(sql, data);
+        }
+
+        public static List<AssignmentModel> LoadAssignments()
+        {
+            string sql = @"SELECT AsId, AsName, AsInfo, AsDate FROM dbo.AssignmentData;";
+
+            return SqlAccess.LoadData<AssignmentModel>(sql);
         }
     }
 }

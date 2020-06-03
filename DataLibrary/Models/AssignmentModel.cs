@@ -8,8 +8,9 @@ namespace DataLibrary.Models
 {
     public class AssignmentModel
     {
-        public int AssignmentId { get; set; }
-        public string AssignmentName { get; set; }
-        public string AssignmentDate { get; set; }
+        public int AsId { get; set; }
+        public string AsName { get; set; }
+        public string AsInfo { get; set; }
+        public DateTime AsDate { get; set; }
     }
 }

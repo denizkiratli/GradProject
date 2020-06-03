@@ -6,7 +6,7 @@ using System.Web;
 
 namespace GradProj.Models
 {
-    public class CreateAssignmentModel
+    public class AssignmentModel
     {
         [Display(Name ="Assignment Id")]
         public int AssignmentId { get; set; }
