@@ -1,5 +1,3 @@
-#GradProj
-
 Gradition Project for Atılım University ISE494 Course.
 
 More information will be added.
