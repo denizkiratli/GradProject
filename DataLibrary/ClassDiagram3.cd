@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="DataLibrary.DataAccess.SqlAccess">
+    <Position X="0.5" Y="2.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAEAAAAAAgA=</HashCode>
+      <FileName>DataAccess\SqlAccess.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLibrary.Logic.DBBridge">
+    <Position X="2.75" Y="0.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAQAAAAAABACAAAAAAAAAAAQIAAAAQAgA=</HashCode>
+      <FileName>Logic\DBBridge.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLibrary.Models.AssignmentModel">
+    <Position X="0.5" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAABAAAAAAAAAACAAAAEAA=</HashCode>
+      <FileName>Models\AssignmentModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLibrary.Models.ResultModel">
+    <Position X="6" Y="0.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAgAAgAAAIAAAgAAAAAQAAAAAAAAAAAEAA=</HashCode>
+      <FileName>Models\ResultModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLibrary.Models.UploadResultModel">
+    <Position X="2.75" Y="3" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAACAIAAAAAAAAAAAACAAAAAAECCAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\UploadResultModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLibrary.Models.UserModel">
+    <Position X="4.5" Y="3" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>FAAAAAIAACAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Models\UserModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

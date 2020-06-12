@@ -28,16 +28,30 @@ namespace DataLibrary.Logic
             return SqlAccess.LoadData<ResultModel>(sql);
         }
 
-        public static int CreateResult(string UserId, int AsId, double Score)
+        public static List<ResultModel> CheckAttendanceNum(string UserId, int AsId)
+        {
+            ResultModel data = new ResultModel
+            {
+                UserId = UserId,
+                AssignmentId = AsId
+            };
+
+            string sql = @"SELECT * FROM dbo.ResultData WHERE (UserId = @UserId AND AsId = @AssignmentId);";
+
+            return SqlAccess.SearchData<ResultModel>(sql, data);
+        }
+
+        public static int CreateResult(string UserId, int AsId, double Score, int TotAsNum)
         {
             ResultModel data = new ResultModel
             {
                 UserId = UserId,
                 AssignmentId = AsId,
-                Score = Score
+                Score = Score,
+                TotAsNum = TotAsNum
             };
 
-            string sql = @"INSERT INTO dbo.ResultData (UserId, AsId, Score) VALUES (@UserId, @AssignmentId, @Score);";
+            string sql = @"INSERT INTO dbo.ResultData (UserId, AsId, Score, TotAsNum) VALUES (@UserId, @AssignmentId, @Score, @TotAsNum);";
 
             return SqlAccess.UseData(sql, data);
         }

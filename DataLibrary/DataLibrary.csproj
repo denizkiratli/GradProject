@@ -117,6 +117,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="ClassDiagram2.cd" />
+    <None Include="ClassDiagram3.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

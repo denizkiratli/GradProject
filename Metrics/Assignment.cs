@@ -197,11 +197,11 @@ namespace Hangman
                 public string FirstName;
                 public string LastName;
             }
-            p = 5;
-            j = 8;
-            j += 1;
-            ++p;
-            p++;
+            //p = 5;
+            //j = 8;
+            //j += 1;
+            //++p;
+            //p++;
         }
     }
 }

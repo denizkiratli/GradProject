@@ -136,9 +136,13 @@ namespace GradProj.Controllers
                 finalScore = DataLibrary.Models.UploadResultModel.finalScore
             });
 
+            int TotAsNum = 1;
             var UserId = User.Identity.GetUserId();
+            var res = DBBridge.CheckAttendanceNum(UserId, AssignmentId);
+            if (res.Count >= 1)
+                TotAsNum++;
             var Score = DataLibrary.Models.UploadResultModel.finalScore;
-            DBBridge.CreateResult(UserId, AssignmentId, Score);
+            DBBridge.CreateResult(UserId, AssignmentId, Score, TotAsNum);
 
             return View(UploadResult);
         }
