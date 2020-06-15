@@ -116,5 +116,17 @@ namespace DataLibrary.Logic
 
             return SqlAccess.LoadData<AssignmentModel>(sql);
         }
+
+        public static List<ResultModel> CheckAssignmentNum(int AsId)
+        {
+            ResultModel data = new ResultModel
+            {
+                AssignmentId = AsId
+            };
+
+            string sql = @"SELECT * FROM dbo.AssignmentData WHERE (AsId = @AssignmentId);";
+
+            return SqlAccess.SearchData<ResultModel>(sql, data);
+        }
     }
 }

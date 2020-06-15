@@ -100,6 +100,8 @@ namespace Metrics
                 return all_classified_variables.Distinct().ToList();
             }
         }
+
+
         public class CMT
         {
             public static List<string> Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> classified_values)
@@ -182,6 +184,7 @@ namespace Metrics
                 return all_classified_methods.Distinct().ToList();
             }
         }
+
         public class CCT
         {
             public static List<string> Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> classified_values, List<string> classified_methods)
@@ -1012,6 +1015,7 @@ namespace Metrics
                 return System.Math.Round(result, 1);
             }
         }
+
         public class CSI // NAN DÜZELDİ
         {
             public static double Calculate(Microsoft.CodeAnalysis.SyntaxNode root, List<string> critical_classes)
@@ -1621,8 +1625,8 @@ namespace Metrics
                 }
                 else
                 {
-                    words = x.ToString().Split('\r');
-                    words = x.ToString().Split('\n');
+                    words = root.ToString().Split('\r');
+                    words = root.ToString().Split('\n');
                     totalNumOfClassLOC += words.Length;
                 }
 
@@ -1817,7 +1821,7 @@ namespace Metrics
             System.Diagnostics.Debug.WriteLine("Testabilty grade: " + System.Math.Round((total / 3) * 100), 2);
             double finalScore = (RWSMS + SDPMS + OOPMG + TUG + TG) / 5;
             DataLibrary.Models.UploadResultModel.finalScore = finalScore;
-            System.Diagnostics.Debug.WriteLine("Fina Score: " + finalScore);
+            System.Diagnostics.Debug.WriteLine("Final Score: " + finalScore);
         }
     }
 }

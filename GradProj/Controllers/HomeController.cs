@@ -67,57 +67,29 @@ namespace GradProj.Controllers
         [HttpPost]
         public ActionResult Upload(HttpPostedFileBase file, ResultModel model)
         {
+            var AsNumCheck = DBBridge.CheckAssignmentNum(model.AssignmentId);
+            if (AsNumCheck.Count == 0)
+            {
+                ViewBag.Message = "There is no Assignment Id which you typed.";
+                return View();
+            }
+
             if (file != null && file.ContentLength > 0)
             {
-                if (file.FileName.Count() > 20)
+                if (!file.FileName.Contains(".cs"))
                 {
-                    ViewBag.Message = "The file name length is too long.";
+                    ViewBag.Message = "The file extension is not .cs.";
                     return View();
-                }
-                
+                }              
                 var path = Path.Combine("C:\\Users\\deniz\\source\\repos\\GradProj\\Metrics\\", "Assignment.cs");
                 file.SaveAs(path);
-
-                /*CSharpCodeProvider codeProvider = new CSharpCodeProvider();
-                ICodeCompiler icc = codeProvider.CreateCompiler();
-                System.CodeDom.Compiler.CompilerParameters parameters = new CompilerParameters();
-                parameters.GenerateInMemory = true;
-                //parameters.OutputAssembly = "assignmentoutput.exe";
-                CompilerResults compileResult = icc.CompileAssemblyFromFile(parameters, "C:\\Users\\deniz\\source\\repos\\GradProj\\Metrics\\Assignment.cs");
-
-                var text = "";
-                if (compileResult.Errors.Count > 0)
-                {
-                    foreach (CompilerError CompErr in compileResult.Errors)
-                    {
-                        text = text +
-                            "Line number " + CompErr.Line +
-                            ", Error Number: " + CompErr.ErrorNumber +
-                            ", '" + CompErr.ErrorText + ";" +
-                            Environment.NewLine + Environment.NewLine;
-                    }
-                }
-
-                System.Diagnostics.Debug.WriteLine(text);
-
-                if (compileResult.Errors.Count == 0)
-                {
-                    return RedirectToAction("UploadResult");
-                }
-                else
-                {
-                    ViewBag.Message = "The uploaded file cannot be compiled!";
-                    return View();
-                }*/
             }
             else
             {
                 ViewBag.Message = "The file is empty!";
                 return View();
             }
-
             return RedirectToAction("UploadResult", new { AssignmentId = model.AssignmentId });
-            //return View();
         }
 
         public ActionResult UploadResult(int AssignmentId)
@@ -125,7 +97,6 @@ namespace GradProj.Controllers
             Metrics.Program.Main();
 
             List<UploadResultModel> UploadResult = new List<UploadResultModel>();
-
             UploadResult.Add(new UploadResultModel
             {
                 RWSMS = DataLibrary.Models.UploadResultModel.RWSMS,
@@ -140,7 +111,7 @@ namespace GradProj.Controllers
             var UserId = User.Identity.GetUserId();
             var res = DBBridge.CheckAttendanceNum(UserId, AssignmentId);
             if (res.Count >= 1)
-                TotAsNum++;
+                TotAsNum = res.Count + 1;
             var Score = DataLibrary.Models.UploadResultModel.finalScore;
             DBBridge.CreateResult(UserId, AssignmentId, Score, TotAsNum);
 
