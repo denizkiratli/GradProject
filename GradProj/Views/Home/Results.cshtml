@@ -8,14 +8,14 @@
 
 <table class="table">
     <tr>
-        <th>
+        @*<th>
             @Html.DisplayNameFor(model => model.ResultId)
+        </th>*@
+        <th>
+            @Html.DisplayNameFor(model => model.AssignmentName)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.InstitutionId)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.AssignmentName)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Score)
@@ -28,15 +28,15 @@
 
 @foreach (var item in Model) {
     <tr>
-        <td>
+        @*<td>
             @Html.DisplayFor(modelItem => item.ResultId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.InstitutionId)
-        </td>
+        </td>*@
         <td>
             @Html.DisplayFor(modelItem => item.AssignmentName)
         </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.InstitutionId)
+        </td>      
         <td>
             @Html.DisplayFor(modelItem => item.Score)
         </td>

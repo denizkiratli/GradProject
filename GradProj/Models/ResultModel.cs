@@ -8,7 +8,7 @@ namespace GradProj.Models
 {
     public class ResultModel
     {
-        [Display(Name = "Submit Id")]
+        [Display(Name = "Submision Id")]
         public int ResultId { get; set; }
 
         [Display(Name = "Student Id")]

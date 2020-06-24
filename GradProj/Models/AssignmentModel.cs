@@ -11,9 +11,11 @@ namespace GradProj.Models
         [Display(Name ="Assignment Id")]
         public int AssignmentId { get; set; }
 
+        [Required]
         [Display(Name = "Assignment Name")]
         public string AssignmentName { get; set; }
 
+        [Required]
         [Display(Name = "Assignment Information")]
         public string AssignmentInfo { get; set; }
 

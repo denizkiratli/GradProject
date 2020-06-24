@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<GradProj.Models.UserModel>
 
 @{
-    ViewBag.Title = "ViewUsers";
+    ViewBag.Title = "View Users";
 }
 
-<br /><h2>ViewUsers</h2><br />
+<br /><h2>View Users</h2><br />
 
 <table class="table">
     <tr>
@@ -33,8 +33,7 @@
         </td>
         <td>
             @Html.ActionLink("Edit", "EditUserInfo", new { UserId = item.UserId, InsId = item.InsId, UserName = item.UserName, MailAddress = item.MailAddress }) |
-            @Html.ActionLink("Change Role", "ChangeRole", new { UserId = item.UserId }) |
-            @Html.ActionLink("Create Role", "CreateRole", new { UserId = item.UserId })
+            @Html.ActionLink("Assign Role", "CreateRole", new { UserId = item.UserId })
         </td>
     </tr>
 }
